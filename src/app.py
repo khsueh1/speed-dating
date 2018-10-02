@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import math
 from sklearn import model_selection
-import random
 
 '''
 Authors: Robert Xu, Kenny Hsueh
@@ -25,7 +24,6 @@ def splitData(data, trainPercentage, testPercentage):
 trainPercent = .6
 crossValidationPercent = .2
 testPercent = .2
-shuffleSeed = 4
 
 # Initial Data Load
 data = pd.read_csv('../Data/Speed Dating Data_Original.csv', encoding="ISO-8859-1", thousands=',')
@@ -59,9 +57,9 @@ noMatch = data[data.match == 0]
 trainMatchData, crossValidationMatchData, testMatchData = splitData(match, testPercent, testPercent)
 trainNoMatchData, crossValidationNoMatchData, testNoMatchData = splitData(noMatch, testPercent, testPercent)
 
-trainData = random.Random(shuffleSeed).shuffle(trainMatchData + trainNoMatchData)
-crossValidationData = random.Random(shuffleSeed).shuffle(crossValidationMatchData + crossValidationNoMatchData)
-testData = random.Random(shuffleSeed).shuffle(testMatchData + testNoMatchData)
+trainData = trainMatchData + trainNoMatchData
+crossValidationData = crossValidationMatchData + crossValidationNoMatchData
+testData = testMatchData + testNoMatchData
 
 # Train
 
