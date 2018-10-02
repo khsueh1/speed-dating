@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import math
 from sklearn import model_selection
+import random
 
 '''
 Authors: Robert Xu, Kenny Hsueh
@@ -14,12 +15,17 @@ def splitData(data, trainPercentage, testPercentage):
     leftoverData, trainData = model_selection.train_test_split(data, test_size=trainPercentage, random_state=42)
     testCount = len(data) * testPercentage
     testScaledPercentage = testCount / len(leftoverData)
-    print(testScaledPercentage)
     testData, crossValidationData  = model_selection.train_test_split(leftoverData,
                                                                       test_size=testScaledPercentage,
                                                                       random_state=42)
     return trainData, crossValidationData, testData
 
+
+# Constants
+trainPercent = .6
+crossValidationPercent = .2
+testPercent = .2
+shuffleSeed = 4
 
 # Initial Data Load
 data = pd.read_csv('../Data/Speed Dating Data_Original.csv', encoding="ISO-8859-1", thousands=',')
@@ -46,13 +52,20 @@ for row in data.itertuples():
     if not math.isnan(row.career_c):
         careers[row.career_c] = row.career
 
-# Split data into 60% training, 20% validation, 20% testing data
+# Split data into training, validation, and testing sets
 match = data[data.match == 1]
 noMatch = data[data.match == 0]
 
-trainMatchData, crossValidationMatchData, testMatchData = splitData(match, .6, .2)
-trainNoMatchData, crossValidationNoMatchData, testNoMatchData = splitData(noMatch, .6, .2)
+trainMatchData, crossValidationMatchData, testMatchData = splitData(match, testPercent, testPercent)
+trainNoMatchData, crossValidationNoMatchData, testNoMatchData = splitData(noMatch, testPercent, testPercent)
 
-trainData = trainMatchData + trainNoMatchData
-crossValidationData = crossValidationMatchData + crossValidationNoMatchData
-testData = testMatchData + testNoMatchData
+trainData = random.Random(shuffleSeed).shuffle(trainMatchData + trainNoMatchData)
+crossValidationData = random.Random(shuffleSeed).shuffle(crossValidationMatchData + crossValidationNoMatchData)
+testData = random.Random(shuffleSeed).shuffle(testMatchData + testNoMatchData)
+
+# Train
+
+
+# Cross Validation
+
+# Test
