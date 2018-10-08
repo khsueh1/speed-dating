@@ -84,9 +84,9 @@ def split_data_equally(data):
                                                                                          TEST_PERCENTAGE)
 
     # TODO: "randomly" shuffle the data?
-    train_data = train_match_data + train_no_match_data
-    cross_validation_data = cross_validation_match_data + cross_validation_no_match_data
-    test_data = test_match_data + test_no_match_data
+    train_data = pd.concat([train_match_data, train_no_match_data])
+    cross_validation_data = pd.concat([cross_validation_match_data, cross_validation_no_match_data])
+    test_data = pd.concat([test_match_data, test_no_match_data])
 
     return train_data, cross_validation_data, test_data
 
@@ -112,7 +112,7 @@ def split_data(data, train_percentage, test_percentage):
 
 
 # Initial Data Load
-data = pd.read_csv(r'../Data/Speed Dating Data_Original.csv', encoding='latin1')
+data = pd.read_csv(r'../Data/Speed Dating Data_Original.csv', encoding='latin1', thousands=',')
 
 # Clean Data
 data = clean_data(data)
@@ -167,10 +167,6 @@ models = [('NB_Bernoulli', BernoulliNB()),
 print('--- Training Models ---')
 for model in models:
     clf = model[1]
-    print(train_X.shape)
-    print(train_Y.shape)
-    print(test_X.shape)
-    print(test_Y.shape)
     clf.fit(train_X, train_Y)
     y_predValid = clf.predict(test_X)
     print("{}:".format(model[0]))
